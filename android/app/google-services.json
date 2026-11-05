@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "602901814482",
+    "project_id": "les-meves-mascotes",
+    "storage_bucket": "les-meves-mascotes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602901814482:android:a617a13e1699e2fa1de10b",
+        "android_client_info": {
+          "package_name": "cat.caroit.les_meves_mascotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlSK9mMPXBYzghqE89L672OWPYtkLUKlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
