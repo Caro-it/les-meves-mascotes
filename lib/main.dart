@@ -7,9 +7,7 @@ import 'styles/app_styles.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const LesMevesMascotesApp());
 }
 
@@ -23,7 +21,17 @@ class LesMevesMascotesApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppStyles.primary),
-        useMaterial3: true,
+        fontFamily: AppStyles.fontText,
+        textTheme: const TextTheme(
+          displayLarge: AppStyles.titol,
+          displayMedium: AppStyles.titol,
+          displaySmall: AppStyles.titol,
+          headlineLarge: AppStyles.titol,
+          headlineMedium: AppStyles.titol,
+          headlineSmall: AppStyles.titol,
+          titleLarge: AppStyles.titol,
+          labelLarge: TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       home: const ProvaAuthScreen(),
     );

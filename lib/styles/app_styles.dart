@@ -21,4 +21,13 @@ class AppStyles {
 
   // Cantonades arrodonides
   static const double radius = 16;
+
+  // Tipografia
+  static const String fontTitols = 'Fredoka';
+  static const String fontText = 'Nunito';
+
+  static const TextStyle titol = TextStyle(
+    fontFamily: fontTitols,
+    fontWeight: FontWeight.w600,
+  );
 }
