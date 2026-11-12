@@ -45,8 +45,9 @@ class Registre {
       'tipus': tipus.name,
       'nom': nom,
       'dataAplicada': Timestamp.fromDate(dataAplicada),
-      'properaDosi':
-          properaDosi != null ? Timestamp.fromDate(properaDosi!) : null,
+      'properaDosi': properaDosi != null
+          ? Timestamp.fromDate(properaDosi!)
+          : null,
       'clinica': clinica,
       'notes': notes,
       'avisar': avisar,

@@ -60,8 +60,9 @@ class Mascota {
       'especie': especie.name,
       'raca': raca,
       'sexe': sexe?.name,
-      'dataNaixement':
-          dataNaixement != null ? Timestamp.fromDate(dataNaixement!) : null,
+      'dataNaixement': dataNaixement != null
+          ? Timestamp.fromDate(dataNaixement!)
+          : null,
       'pes': pes,
       'numXip': numXip,
       'esterilitzat': esterilitzat,

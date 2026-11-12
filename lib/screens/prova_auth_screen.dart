@@ -37,9 +37,11 @@ class _ProvaAuthScreenState extends State<ProvaAuthScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(usuari == null
-                ? 'Sense sessió'
-                : 'Sessió iniciada: ${usuari.email}'),
+            Text(
+              usuari == null
+                  ? 'Sense sessió'
+                  : 'Sessió iniciada: ${usuari.email}',
+            ),
             const SizedBox(height: AppStyles.spaceM),
             TextField(
               controller: _correu,
@@ -54,8 +56,9 @@ class _ProvaAuthScreenState extends State<ProvaAuthScreen> {
             FilledButton(
               onPressed: () => _executa(
                 () => _auth.crearCompte(
-                    correu: _correu.text.trim(),
-                    contrasenya: _contrasenya.text),
+                  correu: _correu.text.trim(),
+                  contrasenya: _contrasenya.text,
+                ),
                 'Compte creat',
               ),
               child: const Text('Crear compte'),
@@ -63,8 +66,9 @@ class _ProvaAuthScreenState extends State<ProvaAuthScreen> {
             OutlinedButton(
               onPressed: () => _executa(
                 () => _auth.iniciarSessio(
-                    correu: _correu.text.trim(),
-                    contrasenya: _contrasenya.text),
+                  correu: _correu.text.trim(),
+                  contrasenya: _contrasenya.text,
+                ),
                 'Sessió iniciada',
               ),
               child: const Text('Entrar'),

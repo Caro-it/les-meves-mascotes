@@ -5,6 +5,11 @@ import 'firebase_options.dart';
 import 'screens/prova_auth_screen.dart';
 import 'styles/app_styles.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'screens/inici_screen.dart';
+import 'services/auth_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -33,7 +38,23 @@ class LesMevesMascotesApp extends StatelessWidget {
           labelLarge: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
-      home: const ProvaAuthScreen(),
+      home: StreamBuilder<User?>(
+        stream: AuthService().canvisSessio,
+        builder: (context, snapshot) {
+          // Mentre Firebase comprova si hi ha sessió guardada
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          // Hi ha usuari → A02 Inici
+          if (snapshot.hasData) {
+            return const IniciScreen();
+          }
+          // No hi ha usuari → pantalla d'entrar (de moment, la de prova)
+          return const ProvaAuthScreen();
+        },
+      ),
     );
   }
 }
