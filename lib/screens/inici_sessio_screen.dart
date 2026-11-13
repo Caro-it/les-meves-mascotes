@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
 import '../styles/app_styles.dart';
 
 // A01 · Inici de sessió / Crear compte
@@ -15,6 +17,8 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
   final _correuCtrl = TextEditingController();
   final _contrasenyaCtrl = TextEditingController();
   bool _amagarContrasenya = true;
+  bool _carregant = false;
+  final _auth = AuthService();
 
   @override
   void dispose() {
@@ -23,10 +27,23 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
     super.dispose();
   }
 
-  void _entrar() {
+  Future<void> _entrar() async {
     if (!_formKey.currentState!.validate()) return;
-    // De moment només comprovem que valida; Firebase al pas 2
-    debugPrint('Correu: ${_correuCtrl.text.trim()}');
+
+    setState(() => _carregant = true);
+    try {
+      await _auth.iniciarSessio(
+        correu: _correuCtrl.text.trim(),
+        contrasenya: _contrasenyaCtrl.text,
+      );
+      // Si va bé, no cal fer res: la porta de main.dart ens porta a l'A02
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(AuthService.missatgeError(e))));
+    } finally {
+      if (mounted) setState(() => _carregant = false);
+    }
   }
 
   @override
@@ -111,18 +128,17 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                   ),
                   const SizedBox(height: AppStyles.spaceL),
                   FilledButton(
-                    onPressed: _entrar,
+                    onPressed: _carregant ? null : _entrar,
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text('Entrar'),
                         SizedBox(width: AppStyles.spaceS),
                         Icon(Icons.arrow_forward),
-                        
                       ],
                     ),
                   ),
-                                  const SizedBox(height: AppStyles.spaceM),
+                  const SizedBox(height: AppStyles.spaceM),
                   TextButton(
                     onPressed: () {
                       // Pas 3: enviar el correu per recuperar la contrasenya
@@ -134,7 +150,8 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                     'Protegim les dades clíniques de les teves mascotes',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppStyles.ink),
-                  ),],
+                  ),
+                ],
               ),
             ),
           ),
