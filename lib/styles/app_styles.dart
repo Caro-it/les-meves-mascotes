@@ -8,6 +8,7 @@ class AppStyles {
   static const Color pink = Color(0xFFF59CA9); // accent mascota
   static const Color coral = Color(0xFFF6828C); // accent mascota
   static const Color error = Color(0xFFC62828); // errors i vençuts
+  static const Color fons = Color(0xFFFFF8F5); // crema del fons (Stitch)
 
   // Colors que es poden assignar a cada mascota
   static const List<Color> petColors = [blue, pink, coral];

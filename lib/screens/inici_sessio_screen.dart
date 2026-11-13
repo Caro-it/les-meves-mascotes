@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+
+import '../styles/app_styles.dart';
+
+// A01 · Inici de sessió / Crear compte
+class IniciSessioScreen extends StatefulWidget {
+  const IniciSessioScreen({super.key});
+
+  @override
+  State<IniciSessioScreen> createState() => _IniciSessioScreenState();
+}
+
+class _IniciSessioScreenState extends State<IniciSessioScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _correuCtrl = TextEditingController();
+  final _contrasenyaCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _correuCtrl.dispose();
+    _contrasenyaCtrl.dispose();
+    super.dispose();
+  }
+
+  void _entrar() {
+    if (!_formKey.currentState!.validate()) return;
+    // De moment només comprovem que valida; Firebase al pas 2
+    debugPrint('Correu: ${_correuCtrl.text.trim()}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppStyles.spaceL),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Image.asset('assets/images/logo.png', height: 88),
+                  const SizedBox(height: AppStyles.spaceM),
+                  Text(
+                    'Les meves mascotes',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: AppStyles.spaceXS),
+                  const Text(
+                    'La cartilla de salut digital per a les teves mascotes',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppStyles.ink),
+                  ),
+                  const SizedBox(height: AppStyles.spaceXL),
+                  const Text(
+                    'Correu electrònic',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: AppStyles.spaceS),
+                  TextFormField(
+                    controller: _correuCtrl,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      hintText: 'hola@exemple.cat',
+                      prefixIcon: Icon(Icons.mail_outline),
+                    ),
+                    validator: (valor) {
+                      final correu = valor?.trim() ?? '';
+                      if (correu.isEmpty) return 'Escriu el teu correu';
+                      if (!correu.contains('@')) return 'El correu no és vàlid';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppStyles.spaceM),
+                  const Text(
+                    'Contrasenya',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: AppStyles.spaceS),
+                  TextFormField(
+                    controller: _contrasenyaCtrl,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Escriu la contrasenya',
+                      prefixIcon: Icon(Icons.key_outlined),
+                    ),
+                    validator: (valor) {
+                      if (valor == null || valor.isEmpty) {
+                        return 'Escriu la contrasenya';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppStyles.spaceL),
+                  FilledButton(onPressed: _entrar, child: const Text('Entrar')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

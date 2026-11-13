@@ -1,14 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
-import 'screens/prova_auth_screen.dart';
-import 'styles/app_styles.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'screens/inici_screen.dart';
+import 'screens/inici_sessio_screen.dart';
 import 'services/auth_service.dart';
+import 'styles/app_styles.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +24,19 @@ class LesMevesMascotesApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppStyles.primary),
+        scaffoldBackgroundColor: AppStyles.fons,
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppStyles.radius),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppStyles.radius),
+            borderSide: const BorderSide(color: AppStyles.primary, width: 1.5),
+          ),
+        ),
         fontFamily: AppStyles.fontText,
         textTheme: const TextTheme(
           displayLarge: AppStyles.titol,
@@ -51,8 +62,7 @@ class LesMevesMascotesApp extends StatelessWidget {
           if (snapshot.hasData) {
             return const IniciScreen();
           }
-          // No hi ha usuari → pantalla d'entrar (de moment, la de prova)
-          return const ProvaAuthScreen();
+          return const IniciSessioScreen();
         },
       ),
     );
