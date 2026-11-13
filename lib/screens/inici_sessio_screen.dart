@@ -118,10 +118,23 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                         Text('Entrar'),
                         SizedBox(width: AppStyles.spaceS),
                         Icon(Icons.arrow_forward),
+                        
                       ],
                     ),
                   ),
-                ],
+                                  const SizedBox(height: AppStyles.spaceM),
+                  TextButton(
+                    onPressed: () {
+                      // Pas 3: enviar el correu per recuperar la contrasenya
+                    },
+                    child: const Text('Has oblidat la contrasenya?'),
+                  ),
+                  const SizedBox(height: AppStyles.spaceS),
+                  const Text(
+                    'Protegim les dades clíniques de les teves mascotes',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: AppStyles.ink),
+                  ),],
               ),
             ),
           ),
