@@ -23,7 +23,10 @@ class LesMevesMascotesApp extends StatelessWidget {
       title: 'Les meves mascotes',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppStyles.primary),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppStyles.primary,
+          primary: AppStyles.primary,
+        ),
         scaffoldBackgroundColor: AppStyles.fons,
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -36,6 +39,9 @@ class LesMevesMascotesApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppStyles.radius),
             borderSide: const BorderSide(color: AppStyles.primary, width: 1.5),
           ),
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
         ),
         fontFamily: AppStyles.fontText,
         textTheme: const TextTheme(

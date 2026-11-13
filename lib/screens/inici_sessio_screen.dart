@@ -94,7 +94,17 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                     },
                   ),
                   const SizedBox(height: AppStyles.spaceL),
-                  FilledButton(onPressed: _entrar, child: const Text('Entrar')),
+                                    FilledButton(
+                    onPressed: _entrar,
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Entrar'),
+                        SizedBox(width: AppStyles.spaceS),
+                        Icon(Icons.arrow_forward),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
