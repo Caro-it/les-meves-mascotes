@@ -14,6 +14,7 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
   final _formKey = GlobalKey<FormState>();
   final _correuCtrl = TextEditingController();
   final _contrasenyaCtrl = TextEditingController();
+  bool _amagarContrasenya = true;
 
   @override
   void dispose() {
@@ -81,10 +82,25 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                   const SizedBox(height: AppStyles.spaceS),
                   TextFormField(
                     controller: _contrasenyaCtrl,
-                    obscureText: true,
-                    decoration: const InputDecoration(
+                    obscureText: _amagarContrasenya,
+                    decoration: InputDecoration(
                       hintText: 'Escriu la contrasenya',
-                      prefixIcon: Icon(Icons.key_outlined),
+                      prefixIcon: const Icon(Icons.key_outlined),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _amagarContrasenya
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        tooltip: _amagarContrasenya
+                            ? 'Mostrar la contrasenya'
+                            : 'Amagar la contrasenya',
+                        onPressed: () {
+                          setState(() {
+                            _amagarContrasenya = !_amagarContrasenya;
+                          });
+                        },
+                      ),
                     ),
                     validator: (valor) {
                       if (valor == null || valor.isEmpty) {
@@ -94,7 +110,7 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                     },
                   ),
                   const SizedBox(height: AppStyles.spaceL),
-                                    FilledButton(
+                  FilledButton(
                     onPressed: _entrar,
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
