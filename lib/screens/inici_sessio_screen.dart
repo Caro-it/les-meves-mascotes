@@ -46,6 +46,37 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
     }
   }
 
+  Future<void> _recuperarContrasenya() async {
+    final correu = _correuCtrl.text.trim();
+    final missatger = ScaffoldMessenger.of(context);
+
+    if (correu.isEmpty || !correu.contains('@')) {
+      missatger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Escriu el teu correu a dalt i torna a tocar l\'enllaç.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    try {
+      await _auth.recuperarContrasenya(correu);
+      missatger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Si hi ha un compte amb aquest correu, t\'hem enviat un enllaç.',
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      missatger.showSnackBar(
+        SnackBar(content: Text(AuthService.missatgeError(e))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,9 +171,7 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                   ),
                   const SizedBox(height: AppStyles.spaceM),
                   TextButton(
-                    onPressed: () {
-                      // Pas 3: enviar el correu per recuperar la contrasenya
-                    },
+                    onPressed: _recuperarContrasenya,
                     child: const Text('Has oblidat la contrasenya?'),
                   ),
                   const SizedBox(height: AppStyles.spaceS),
