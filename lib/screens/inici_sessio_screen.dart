@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../models/usuari.dart';
 import '../services/auth_service.dart';
+import '../services/usuari_service.dart';
 import '../styles/app_styles.dart';
 
 // A01 · Inici de sessió / Crear compte
@@ -53,8 +55,42 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
 
   Future<void> _crearCompte() async {
     if (!_formKey.currentState!.validate()) return;
-    // Pas 4C: crear el compte a Firebase i desar el perfil
-    debugPrint('Crear compte: ${_nomCtrl.text.trim()}');
+
+    final missatger = ScaffoldMessenger.of(context);
+    setState(() => _carregant = true);
+    try {
+      // B01 · Crear el compte a Authentication
+      final usuari = await _auth.crearCompte(
+        correu: _correuCtrl.text.trim(),
+        contrasenya: _contrasenyaCtrl.text,
+      );
+      // B05 · Desar el perfil a Firestore
+      if (usuari != null) {
+        await UsuariService().crearPerfil(
+          Usuari(
+            uid: usuari.uid,
+            nom: _nomCtrl.text.trim(),
+            correu: _correuCtrl.text.trim(),
+            dataAlta: DateTime.now(),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      missatger.showSnackBar(
+        SnackBar(content: Text(AuthService.missatgeError(e))),
+      );
+    } on FirebaseException catch (e) {
+      debugPrint('Error Firestore: ${e.code}');
+      missatger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            "El compte s'ha creat, però no s'ha pogut desar el perfil.",
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _carregant = false);
+    }
   }
 
   Future<void> _recuperarContrasenya() async {
@@ -116,6 +152,13 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                   const SizedBox(height: AppStyles.spaceXL),
                   SegmentedButton<bool>(
                     showSelectedIcon: false,
+                    style: SegmentedButton.styleFrom(
+                      backgroundColor: const Color(0xFFEAE5E2),
+                      foregroundColor: AppStyles.ink,
+                      selectedBackgroundColor: AppStyles.primary,
+                      selectedForegroundColor: Colors.white,
+                      side: BorderSide.none,
+                    ),
                     segments: const [
                       ButtonSegment(
                         value: false,
