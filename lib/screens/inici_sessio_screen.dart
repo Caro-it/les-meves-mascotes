@@ -16,14 +16,19 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
   final _formKey = GlobalKey<FormState>();
   final _correuCtrl = TextEditingController();
   final _contrasenyaCtrl = TextEditingController();
+  final _nomCtrl = TextEditingController();
+  final _repeticioCtrl = TextEditingController();
   bool _amagarContrasenya = true;
   bool _carregant = false;
   final _auth = AuthService();
+  bool _modeCrear = false; // false = Iniciar sessió · true = Crear compte
 
   @override
   void dispose() {
     _correuCtrl.dispose();
     _contrasenyaCtrl.dispose();
+    _nomCtrl.dispose();
+    _repeticioCtrl.dispose();
     super.dispose();
   }
 
@@ -44,6 +49,12 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
     } finally {
       if (mounted) setState(() => _carregant = false);
     }
+  }
+
+  Future<void> _crearCompte() async {
+    if (!_formKey.currentState!.validate()) return;
+    // Pas 4C: crear el compte a Firebase i desar el perfil
+    debugPrint('Crear compte: ${_nomCtrl.text.trim()}');
   }
 
   Future<void> _recuperarContrasenya() async {
@@ -103,6 +114,48 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                     style: TextStyle(color: AppStyles.ink),
                   ),
                   const SizedBox(height: AppStyles.spaceXL),
+                  SegmentedButton<bool>(
+                    showSelectedIcon: false,
+                    segments: const [
+                      ButtonSegment(
+                        value: false,
+                        label: Text('Iniciar sessió'),
+                        icon: Icon(Icons.lock_outline),
+                      ),
+                      ButtonSegment(
+                        value: true,
+                        label: Text('Crear compte'),
+                        icon: Icon(Icons.person_add_alt),
+                      ),
+                    ],
+                    selected: {_modeCrear},
+                    onSelectionChanged: (seleccio) {
+                      setState(() => _modeCrear = seleccio.first);
+                    },
+                  ),
+                  const SizedBox(height: AppStyles.spaceL),
+                  if (_modeCrear) ...[
+                    const Text(
+                      'Nom',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: AppStyles.spaceS),
+                    TextFormField(
+                      controller: _nomCtrl,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: const InputDecoration(
+                        hintText: 'Com et dius?',
+                        prefixIcon: Icon(Icons.person_outline),
+                      ),
+                      validator: (valor) {
+                        if (valor == null || valor.trim().isEmpty) {
+                          return 'Escriu el teu nom';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppStyles.spaceM),
+                  ],
                   const Text(
                     'Correu electrònic',
                     style: TextStyle(fontWeight: FontWeight.w700),
@@ -154,26 +207,54 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                       if (valor == null || valor.isEmpty) {
                         return 'Escriu la contrasenya';
                       }
+                      if (_modeCrear && valor.length < 6) {
+                        return 'Mínim 6 caràcters';
+                      }
                       return null;
                     },
                   ),
+                  if (_modeCrear) ...[
+                    const SizedBox(height: AppStyles.spaceM),
+                    const Text(
+                      'Repeteix la contrasenya',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: AppStyles.spaceS),
+                    TextFormField(
+                      controller: _repeticioCtrl,
+                      obscureText: _amagarContrasenya,
+                      decoration: const InputDecoration(
+                        hintText: 'Torna a escriure-la',
+                        prefixIcon: Icon(Icons.key_outlined),
+                      ),
+                      validator: (valor) {
+                        if (valor != _contrasenyaCtrl.text) {
+                          return 'Les contrasenyes no coincideixen';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                   const SizedBox(height: AppStyles.spaceL),
                   FilledButton(
-                    onPressed: _carregant ? null : _entrar,
-                    child: const Row(
+                    onPressed: _carregant
+                        ? null
+                        : (_modeCrear ? _crearCompte : _entrar),
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Entrar'),
+                        Text(_modeCrear ? 'Crear compte' : 'Entrar'),
                         SizedBox(width: AppStyles.spaceS),
                         Icon(Icons.arrow_forward),
                       ],
                     ),
                   ),
                   const SizedBox(height: AppStyles.spaceM),
-                  TextButton(
-                    onPressed: _recuperarContrasenya,
-                    child: const Text('Has oblidat la contrasenya?'),
-                  ),
+                  if (!_modeCrear)
+                    TextButton(
+                      onPressed: _recuperarContrasenya,
+                      child: const Text('Has oblidat la contrasenya?'),
+                    ),
                   const SizedBox(height: AppStyles.spaceS),
                   const Text(
                     'Protegim les dades clíniques de les teves mascotes',
