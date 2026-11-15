@@ -18,6 +18,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   final _nomController = TextEditingController();
   final _racaController = TextEditingController();
   Especie _especie = Especie.gos;
+  Sexe? _sexe;
   bool _desant = false;
 
   @override
@@ -39,6 +40,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       raca: _racaController.text.trim().isEmpty
           ? null
           : _racaController.text.trim(),
+      sexe: _sexe,
       color: AppStyles.petColors.first.toARGB32(),
     );
 
@@ -96,6 +98,20 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Raça',
                   hintText: 'ex: Golden Retriever, Comú europeu…',
+                ),
+              ),
+              const SizedBox(height: AppStyles.spaceL),
+              Text('Sexe', style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: AppStyles.spaceS),
+              SegmentedButton<Sexe>(
+                segments: const [
+                  ButtonSegment(value: Sexe.mascle, label: Text('Mascle')),
+                  ButtonSegment(value: Sexe.femella, label: Text('Femella')),
+                ],
+                selected: _sexe == null ? <Sexe>{} : {_sexe!},
+                emptySelectionAllowed: true,
+                onSelectionChanged: (seleccio) => setState(
+                  () => _sexe = seleccio.isEmpty ? null : seleccio.first,
                 ),
               ),
               const SizedBox(height: AppStyles.spaceXL),
