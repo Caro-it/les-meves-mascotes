@@ -16,12 +16,14 @@ class NovaMascotaScreen extends StatefulWidget {
 class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nomController = TextEditingController();
+  final _racaController = TextEditingController();
   Especie _especie = Especie.gos;
   bool _desant = false;
 
   @override
   void dispose() {
     _nomController.dispose();
+    _racaController.dispose();
     super.dispose();
   }
 
@@ -34,6 +36,9 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       id: '', // l'id el posa Firestore
       nom: _nomController.text.trim(),
       especie: _especie,
+      raca: _racaController.text.trim().isEmpty
+          ? null
+          : _racaController.text.trim(),
       color: AppStyles.petColors.first.toARGB32(),
     );
 
@@ -83,6 +88,15 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                 selected: {_especie},
                 onSelectionChanged: (seleccio) =>
                     setState(() => _especie = seleccio.first),
+              ),
+              const SizedBox(height: AppStyles.spaceM),
+              TextFormField(
+                controller: _racaController,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  labelText: 'Raça',
+                  hintText: 'ex: Golden Retriever, Comú europeu…',
+                ),
               ),
               const SizedBox(height: AppStyles.spaceXL),
               FilledButton.icon(
