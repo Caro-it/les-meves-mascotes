@@ -9,4 +9,11 @@ class UsuariService {
   Future<void> crearPerfil(Usuari usuari) {
     return _db.collection('usuaris').doc(usuari.uid).set(usuari.toFirestore());
   }
+
+  // B05 · Llegeix el perfil de usuaris/{uid} (null si no en té)
+  Future<Usuari?> llegirPerfil(String uid) async {
+    final doc = await _db.collection('usuaris').doc(uid).get();
+    if (!doc.exists) return null;
+    return Usuari.fromFirestore(doc.id, doc.data()!);
+  }
 }
