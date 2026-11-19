@@ -31,6 +31,40 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
       : '${d.day.toString().padLeft(2, '0')}/'
             '${d.month.toString().padLeft(2, '0')}/${d.year}';
 
+  Future<void> _esborrar(Mascota m) async {
+    final confirmat = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Esborrar mascota'),
+        content: Text('Segur que vols esborrar ${m.nom}? No es pot desfer.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel·lar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: AppStyles.error),
+            child: const Text('Esborrar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmat != true) return;
+
+    final uid = AuthService().usuariActual!.uid;
+    try {
+      await MascotaService().esborrarMascota(uid, m.id);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No s'ha pogut esborrar la mascota")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Mascota?>(
@@ -62,6 +96,11 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                     ),
                   );
                 },
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Esborrar',
+                onPressed: () => _esborrar(m),
               ),
             ],
           ),

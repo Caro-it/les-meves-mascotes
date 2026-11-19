@@ -33,6 +33,11 @@ class MascotaService {
     return _mascotes(uid).doc(mascota.id).update(mascota.toFirestore());
   }
 
+  // B09 · Esborra una mascota
+  Future<void> esborrarMascota(String uid, String id) {
+    return _mascotes(uid).doc(id).delete();
+  }
+
   // Llegeix una sola mascota i avisa de cada canvi (per a la fitxa A04)
   Stream<Mascota?> llegirMascota(String uid, String id) {
     return _mascotes(uid)
