@@ -152,6 +152,16 @@ class _IniciScreenState extends State<IniciScreen> {
                             ),
                             title: Text(mascota.nom),
                             subtitle: Text(mascota.especie.name),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NovaMascotaScreen(mascota: mascota),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },

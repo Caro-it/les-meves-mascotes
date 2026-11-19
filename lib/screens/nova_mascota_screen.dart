@@ -7,7 +7,9 @@ import '../styles/app_styles.dart';
 
 // A03 · Nova mascota
 class NovaMascotaScreen extends StatefulWidget {
-  const NovaMascotaScreen({super.key});
+  const NovaMascotaScreen({super.key, this.mascota});
+
+  final Mascota? mascota; // null = nova · amb dades = editar
 
   @override
   State<NovaMascotaScreen> createState() => _NovaMascotaScreenState();
@@ -23,13 +25,24 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   bool _desant = false;
 
   @override
+  void initState() {
+    super.initState();
+    final m = widget.mascota;
+    if (m != null) {
+      _nomController.text = m.nom;
+      _racaController.text = m.raca ?? '';
+      _especie = m.especie;
+      _sexe = m.sexe;
+      _dataNaixement = m.dataNaixement;
+    }
+  }
+
+  @override
   void dispose() {
     _nomController.dispose();
     _racaController.dispose();
     super.dispose();
   }
-
- 
 
   Future<void> _triarDataNaixement() async {
     final data = await showDatePicker(
@@ -48,8 +61,9 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
     setState(() => _desant = true);
 
     final uid = AuthService().usuariActual!.uid;
+    final original = widget.mascota; // null si és nova
     final mascota = Mascota(
-      id: '', // l'id el posa Firestore
+      id: original?.id ?? '', // nova: l'id el posa Firestore
       nom: _nomController.text.trim(),
       especie: _especie,
       raca: _racaController.text.trim().isEmpty
@@ -57,11 +71,21 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
           : _racaController.text.trim(),
       sexe: _sexe,
       dataNaixement: _dataNaixement,
-      color: AppStyles.petColors.first.toARGB32(),
+      // camps que encara no són al formulari: es conserven els de l'original
+      pes: original?.pes,
+      numXip: original?.numXip,
+      esterilitzat: original?.esterilitzat ?? false,
+      dataEsterilitzacio: original?.dataEsterilitzacio,
+      rutaFoto: original?.rutaFoto,
+      color: original?.color ?? AppStyles.petColors.first.toARGB32(),
     );
 
     try {
-      await MascotaService().crearMascota(uid, mascota);
+      if (original == null) {
+        await MascotaService().crearMascota(uid, mascota);
+      } else {
+        await MascotaService().actualitzarMascota(uid, mascota);
+      }
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
@@ -76,7 +100,9 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nova mascota')),
+      appBar: AppBar(
+        title: Text(widget.mascota == null ? 'Nova mascota' : 'Editar mascota'),
+      ),
       body: SafeArea(
         child: Form(
           key: _formKey,
