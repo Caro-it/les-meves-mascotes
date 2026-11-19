@@ -74,3 +74,10 @@ class Mascota {
     };
   }
 }
+
+// Text segons el sexe: «Esterilitzat», «Esterilitzada» o «Esterilitzat/da»
+String textEsterilitzat(Sexe? sexe) => switch (sexe) {
+  Sexe.mascle => 'Esterilitzat',
+  Sexe.femella => 'Esterilitzada',
+  null => 'Esterilitzat/da',
+};

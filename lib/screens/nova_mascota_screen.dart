@@ -25,6 +25,8 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   Especie _especie = Especie.gos;
   Sexe? _sexe;
   DateTime? _dataNaixement;
+  bool _esterilitzat = false;
+  DateTime? _dataEsterilitzacio;
   bool _desant = false;
 
   @override
@@ -39,6 +41,8 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       _especie = m.especie;
       _sexe = m.sexe;
       _dataNaixement = m.dataNaixement;
+      _esterilitzat = m.esterilitzat;
+      _dataEsterilitzacio = m.dataEsterilitzacio;
     }
   }
 
@@ -63,6 +67,23 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
     if (data != null) setState(() => _dataNaixement = data);
   }
 
+  Future<void> _triarDataEsterilitzacio() async {
+    final data = await showDatePicker(
+      context: context,
+      initialDate: _dataEsterilitzacio ?? DateTime.now(),
+      firstDate: _dataNaixement ?? DateTime(2000),
+      lastDate: DateTime.now(),
+      helpText: "Data d'esterilització",
+    );
+    if (!mounted) return;
+    if (data != null) setState(() => _dataEsterilitzacio = data);
+  }
+
+  String _data(DateTime? d) => d == null
+      ? 'Toca per triar'
+      : '${d.day.toString().padLeft(2, '0')}/'
+            '${d.month.toString().padLeft(2, '0')}/${d.year}';
+
   Future<void> _desar() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _desant = true);
@@ -83,8 +104,8 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       numXip: _xipController.text.trim().isEmpty
           ? null
           : _xipController.text.trim(),
-      esterilitzat: original?.esterilitzat ?? false,
-      dataEsterilitzacio: original?.dataEsterilitzacio,
+      esterilitzat: _esterilitzat,
+      dataEsterilitzacio: _esterilitzat ? _dataEsterilitzacio : null,
       rutaFoto: original?.rutaFoto,
       color: original?.color ?? AppStyles.petColors.first.toARGB32(),
     );
@@ -220,6 +241,27 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: AppStyles.spaceS),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(textEsterilitzat(_sexe)),
+                value: _esterilitzat,
+                onChanged: (valor) => setState(() {
+                  _esterilitzat = valor;
+                  if (!valor) _dataEsterilitzacio = null;
+                }),
+              ),
+              if (_esterilitzat)
+                InkWell(
+                  onTap: _triarDataEsterilitzacio,
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: "Data d'esterilització",
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    child: Text(_data(_dataEsterilitzacio)),
+                  ),
+                ),
               const SizedBox(height: AppStyles.spaceXL),
               FilledButton.icon(
                 onPressed: _desant ? null : _desar,

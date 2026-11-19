@@ -135,6 +135,12 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                 title: const Text('Xip'),
                 subtitle: Text(m.numXip ?? '—'),
               ),
+              ListTile(
+                title: Text(textEsterilitzat(m.sexe)),
+                subtitle: Text(
+                  m.esterilitzat ? 'Sí · ${_data(m.dataEsterilitzacio)}' : 'No',
+                ),
+              ),
             ],
           ),
         );
