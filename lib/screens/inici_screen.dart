@@ -6,6 +6,7 @@ import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../services/usuari_service.dart';
 import '../styles/app_styles.dart';
+import '../widgets/mascota_card.dart';
 import 'fitxa_mascota_screen.dart';
 import 'nova_mascota_screen.dart';
 
@@ -145,25 +146,17 @@ class _IniciScreenState extends State<IniciScreen> {
                       itemCount: mascotes.length,
                       itemBuilder: (context, i) {
                         final mascota = mascotes[i];
-                        return Card(
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Color(mascota.color),
-                              child: const Icon(Icons.pets),
-                            ),
-                            title: Text(mascota.nom),
-                            subtitle: Text(mascota.especie.name),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      FitxaMascotaScreen(mascotaId: mascota.id),
-                                ),
-                              );
-                            },
-                          ),
+                        return MascotaCard(
+                          mascota: mascota,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    FitxaMascotaScreen(mascotaId: mascota.id),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
