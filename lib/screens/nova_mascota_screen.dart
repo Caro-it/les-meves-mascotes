@@ -19,6 +19,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   final _racaController = TextEditingController();
   Especie _especie = Especie.gos;
   Sexe? _sexe;
+  DateTime? _dataNaixement;
   bool _desant = false;
 
   @override
@@ -26,6 +27,20 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
     _nomController.dispose();
     _racaController.dispose();
     super.dispose();
+  }
+
+ 
+
+  Future<void> _triarDataNaixement() async {
+    final data = await showDatePicker(
+      context: context,
+      initialDate: _dataNaixement ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      helpText: 'Data de naixement',
+    );
+    if (!mounted) return;
+    if (data != null) setState(() => _dataNaixement = data);
   }
 
   Future<void> _desar() async {
@@ -41,6 +56,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
           ? null
           : _racaController.text.trim(),
       sexe: _sexe,
+      dataNaixement: _dataNaixement,
       color: AppStyles.petColors.first.toARGB32(),
     );
 
@@ -112,6 +128,23 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                 emptySelectionAllowed: true,
                 onSelectionChanged: (seleccio) => setState(
                   () => _sexe = seleccio.isEmpty ? null : seleccio.first,
+                ),
+              ),
+              const SizedBox(height: AppStyles.spaceL),
+              InkWell(
+                onTap: _triarDataNaixement,
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Data de naixement',
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
+                  child: Text(
+                    _dataNaixement == null
+                        ? 'Toca per triar'
+                        : '${_dataNaixement!.day.toString().padLeft(2, '0')}/'
+                              '${_dataNaixement!.month.toString().padLeft(2, '0')}/'
+                              '${_dataNaixement!.year}',
+                  ),
                 ),
               ),
               const SizedBox(height: AppStyles.spaceXL),

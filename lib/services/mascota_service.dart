@@ -27,4 +27,9 @@ class MascotaService {
     final doc = await _mascotes(uid).add(mascota.toFirestore());
     return doc.id;
   }
+
+  // B08 · Actualitza les dades d'una mascota que ja existeix
+  Future<void> actualitzarMascota(String uid, Mascota mascota) {
+    return _mascotes(uid).doc(mascota.id).update(mascota.toFirestore());
+  }
 }
