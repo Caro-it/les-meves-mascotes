@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../styles/app_styles.dart';
 import 'historial_screen.dart';
+import 'nou_registre_screen.dart';
 import 'nova_mascota_screen.dart';
 
 // A04 · Fitxa de la mascota
@@ -32,7 +33,11 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
       : '${d.day.toString().padLeft(2, '0')}/'
             '${d.month.toString().padLeft(2, '0')}/${d.year}';
 
-
+  String _textNascut(Sexe? sexe) => switch (sexe) {
+    Sexe.mascle => 'Nascut',
+    Sexe.femella => 'Nascuda',
+    null => 'Nascut/da',
+  };
 
   Future<void> _esborrar(Mascota m) async {
     final confirmat = await showDialog<bool>(
@@ -110,57 +115,176 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
           body: ListView(
             padding: const EdgeInsets.all(AppStyles.spaceM),
             children: [
-              ListTile(
-                title: const Text('Espècie'),
-                subtitle: Text(m.especie.name),
-              ),
-              ListTile(
-                title: const Text('Raça'),
-                subtitle: Text(m.raca ?? '—'),
-              ),
-              ListTile(
-                title: const Text('Sexe'),
-                subtitle: Text(m.sexe?.name ?? '—'),
-              ),
-              ListTile(
-                title: const Text('Data de naixement'),
-                subtitle: Text(
-                  m.dataNaixement == null
-                      ? '—'
-                      : '${_data(m.dataNaixement)} · ${textEdat(m.dataNaixement!)}',
+              // Capçalera (més endavant hi anirà la foto)
+              Container(
+                height: 180,
+                decoration: BoxDecoration(
+                  color: Color(m.color).withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(AppStyles.radius),
                 ),
+                child: Icon(Icons.pets, size: 72, color: Color(m.color)),
               ),
-              ListTile(
-                title: const Text('Pes'),
-                subtitle: Text(
-                  m.pes == null
-                      ? '—'
-                      : '${m.pes!.toString().replaceAll('.', ',')} kg',
-                ),
-              ),
-              ListTile(
-                title: const Text('Xip'),
-                subtitle: Text(m.numXip ?? '—'),
-              ),
-              ListTile(
-                title: Text(textEsterilitzat(m.sexe)),
-                subtitle: Text(
-                  m.esterilitzat ? 'Sí · ${_data(m.dataEsterilitzacio)}' : 'No',
-                ),
-              ),
-              const SizedBox(height: AppStyles.spaceL),
-              FilledButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          HistorialScreen(mascotaId: m.id, nomMascota: m.nom),
+              // Targeta principal, muntada sobre la capçalera
+              Transform.translate(
+                offset: const Offset(0, -28),
+                child: Card(
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: AppStyles.spaceS,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppStyles.radius),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppStyles.spaceM),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          m.nom,
+                          style: AppStyles.titol.copyWith(fontSize: 32),
+                        ),
+                        const SizedBox(height: AppStyles.spaceXS),
+                        Text(
+                          [
+                            textEspecie(m.especie),
+                            if (m.raca != null) m.raca!,
+                            if (m.dataNaixement != null)
+                              textEdat(m.dataNaixement!),
+                          ].join(' · '),
+                        ),
+                        if (m.dataNaixement != null)
+                          Text(
+                            '${_textNascut(m.sexe)} el ${_data(m.dataNaixement)}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppStyles.ink.withValues(alpha: 0.6),
+                            ),
+                          ),
+                        if (m.esterilitzat) ...[
+                          const SizedBox(height: AppStyles.spaceS),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppStyles.blue.withValues(alpha: 0.4),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.check_circle_outline,
+                                  size: 16,
+                                  color: AppStyles.ink,
+                                ),
+                                const SizedBox(width: AppStyles.spaceXS),
+                                Text(
+                                  textEsterilitzat(m.sexe),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: AppStyles.spaceM),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor:
+                                      AppStyles.ink.withValues(alpha: 0.06),
+                                  side: BorderSide.none,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HistorialScreen(
+                                        mascotaId: m.id,
+                                        nomMascota: m.nom,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.menu_book_outlined),
+                                label: const Text('Historial'),
+                              ),
+                            ),
+                            const SizedBox(width: AppStyles.spaceS),
+                            Expanded(
+                              child: FilledButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          NouRegistreScreen(mascotaId: m.id),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text('Nou registre'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  );
-                },
-                icon: const Icon(Icons.history),
-                label: const Text('Historial'),
+                  ),
+                ),
+              ),
+              // Dades de la 2.1 que no surten a Stitch
+              // (també es puja, perquè no quedi un forat entre les targetes)
+              Transform.translate(
+                offset: const Offset(0, -16),
+                child: Card(
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: AppStyles.spaceS,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppStyles.radius),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.wc),
+                        title: const Text('Sexe'),
+                        subtitle: Text(switch (m.sexe) {
+                          Sexe.mascle => 'Mascle',
+                          Sexe.femella => 'Femella',
+                          null => '—',
+                        }),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.monitor_weight_outlined),
+                        title: const Text('Pes'),
+                        subtitle: Text(
+                          m.pes == null
+                              ? '—'
+                              : '${m.pes!.toString().replaceAll('.', ',')} kg',
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.memory),
+                        title: const Text('Xip'),
+                        subtitle: Text(m.numXip ?? '—'),
+                      ),
+                      if (m.esterilitzat)
+                        ListTile(
+                          leading: const Icon(Icons.event_available),
+                          title: const Text("Data d'esterilització"),
+                          subtitle: Text(_data(m.dataEsterilitzacio)),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
