@@ -123,6 +123,14 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                 title: const Text('Data de naixement'),
                 subtitle: Text(_data(m.dataNaixement)),
               ),
+              ListTile(
+                title: const Text('Pes'),
+                subtitle: Text(
+                  m.pes == null
+                      ? '—'
+                      : '${m.pes!.toString().replaceAll('.', ',')} kg',
+                ),
+              ),
             ],
           ),
         );

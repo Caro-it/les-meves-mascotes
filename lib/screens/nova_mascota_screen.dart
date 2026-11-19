@@ -19,6 +19,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nomController = TextEditingController();
   final _racaController = TextEditingController();
+  final _pesController = TextEditingController();
   Especie _especie = Especie.gos;
   Sexe? _sexe;
   DateTime? _dataNaixement;
@@ -31,6 +32,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
     if (m != null) {
       _nomController.text = m.nom;
       _racaController.text = m.raca ?? '';
+      _pesController.text = m.pes?.toString() ?? '';
       _especie = m.especie;
       _sexe = m.sexe;
       _dataNaixement = m.dataNaixement;
@@ -41,6 +43,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   void dispose() {
     _nomController.dispose();
     _racaController.dispose();
+    _pesController.dispose();
     super.dispose();
   }
 
@@ -72,7 +75,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       sexe: _sexe,
       dataNaixement: _dataNaixement,
       // camps que encara no són al formulari: es conserven els de l'original
-      pes: original?.pes,
+      pes: double.tryParse(_pesController.text.trim().replaceAll(',', '.')),
       numXip: original?.numXip,
       esterilitzat: original?.esterilitzat ?? false,
       dataEsterilitzacio: original?.dataEsterilitzacio,
@@ -172,6 +175,26 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                               '${_dataNaixement!.year}',
                   ),
                 ),
+              ),
+              const SizedBox(height: AppStyles.spaceM),
+              TextFormField(
+                controller: _pesController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  labelText: 'Pes (kg)',
+                  hintText: 'ex: 4,5',
+                ),
+                validator: (valor) {
+                  final text = valor?.trim() ?? '';
+                  if (text.isEmpty) return null; // és opcional
+                  final pes = double.tryParse(text.replaceAll(',', '.'));
+                  if (pes == null || pes <= 0 || pes > 150) {
+                    return 'Escriu un pes vàlid en kg';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: AppStyles.spaceXL),
               FilledButton.icon(
