@@ -32,4 +32,15 @@ class MascotaService {
   Future<void> actualitzarMascota(String uid, Mascota mascota) {
     return _mascotes(uid).doc(mascota.id).update(mascota.toFirestore());
   }
+
+  // Llegeix una sola mascota i avisa de cada canvi (per a la fitxa A04)
+  Stream<Mascota?> llegirMascota(String uid, String id) {
+    return _mascotes(uid)
+        .doc(id)
+        .snapshots()
+        .map(
+          (doc) =>
+              doc.exists ? Mascota.fromFirestore(doc.id, doc.data()!) : null,
+        );
+  }
 }

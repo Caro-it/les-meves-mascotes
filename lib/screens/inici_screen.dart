@@ -6,6 +6,7 @@ import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../services/usuari_service.dart';
 import '../styles/app_styles.dart';
+import 'fitxa_mascota_screen.dart';
 import 'nova_mascota_screen.dart';
 
 // A02 · Inici
@@ -158,7 +159,7 @@ class _IniciScreenState extends State<IniciScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      NovaMascotaScreen(mascota: mascota),
+                                      FitxaMascotaScreen(mascotaId: mascota.id),
                                 ),
                               );
                             },
