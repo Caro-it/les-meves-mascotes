@@ -21,7 +21,7 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
   final _clinicaController = TextEditingController();
   final _notesController = TextEditingController();
   TipusRegistre _tipus = TipusRegistre.vacuna;
-  DateTime _dataAplicada = DateTime.now();
+  DateTime _dataAplicada = DateUtils.dateOnly(DateTime.now());
   DateTime? _properaDosi;
   bool _desant = false;
 
