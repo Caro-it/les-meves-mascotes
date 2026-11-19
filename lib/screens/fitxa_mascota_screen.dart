@@ -131,6 +131,10 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                       : '${m.pes!.toString().replaceAll('.', ',')} kg',
                 ),
               ),
+              ListTile(
+                title: const Text('Xip'),
+                subtitle: Text(m.numXip ?? '—'),
+              ),
             ],
           ),
         );

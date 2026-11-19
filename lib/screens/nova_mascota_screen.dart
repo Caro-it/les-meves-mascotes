@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/mascota.dart';
 import '../services/auth_service.dart';
@@ -20,6 +21,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   final _nomController = TextEditingController();
   final _racaController = TextEditingController();
   final _pesController = TextEditingController();
+  final _xipController = TextEditingController();
   Especie _especie = Especie.gos;
   Sexe? _sexe;
   DateTime? _dataNaixement;
@@ -33,6 +35,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       _nomController.text = m.nom;
       _racaController.text = m.raca ?? '';
       _pesController.text = m.pes?.toString() ?? '';
+      _xipController.text = m.numXip ?? '';
       _especie = m.especie;
       _sexe = m.sexe;
       _dataNaixement = m.dataNaixement;
@@ -44,6 +47,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
     _nomController.dispose();
     _racaController.dispose();
     _pesController.dispose();
+    _xipController.dispose();
     super.dispose();
   }
 
@@ -76,7 +80,9 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       dataNaixement: _dataNaixement,
       // camps que encara no són al formulari: es conserven els de l'original
       pes: double.tryParse(_pesController.text.trim().replaceAll(',', '.')),
-      numXip: original?.numXip,
+      numXip: _xipController.text.trim().isEmpty
+          ? null
+          : _xipController.text.trim(),
       esterilitzat: original?.esterilitzat ?? false,
       dataEsterilitzacio: original?.dataEsterilitzacio,
       rutaFoto: original?.rutaFoto,
@@ -126,6 +132,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
               const SizedBox(height: AppStyles.spaceL),
               Text('Espècie *', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: AppStyles.spaceS),
+
               SegmentedButton<Especie>(
                 segments: const [
                   ButtonSegment(value: Especie.gos, label: Text('Gos')),
@@ -193,6 +200,23 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                   if (pes == null || pes <= 0 || pes > 150) {
                     return 'Escriu un pes vàlid en kg';
                   }
+                  return null;
+                },
+              ),
+              const SizedBox(height: AppStyles.spaceM),
+              TextFormField(
+                controller: _xipController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 15,
+                decoration: const InputDecoration(
+                  labelText: 'Número de xip',
+                  hintText: '15 xifres',
+                ),
+                validator: (valor) {
+                  final text = valor?.trim() ?? '';
+                  if (text.isEmpty) return null; // és opcional
+                  if (text.length != 15) return 'El xip ha de tenir 15 xifres';
                   return null;
                 },
               ),
