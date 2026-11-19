@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../models/mascota.dart';
 import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../styles/app_styles.dart';
+import 'nou_registre_screen.dart';
 import 'nova_mascota_screen.dart';
 
 // A04 · Fitxa de la mascota
@@ -140,6 +140,19 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                 subtitle: Text(
                   m.esterilitzat ? 'Sí · ${_data(m.dataEsterilitzacio)}' : 'No',
                 ),
+              ),
+              const SizedBox(height: AppStyles.spaceL),
+              FilledButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NouRegistreScreen(mascotaId: m.id),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.vaccines),
+                label: const Text('Afegir registre'),
               ),
             ],
           ),
