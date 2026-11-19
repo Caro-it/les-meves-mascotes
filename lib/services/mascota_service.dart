@@ -33,9 +33,17 @@ class MascotaService {
     return _mascotes(uid).doc(mascota.id).update(mascota.toFirestore());
   }
 
-  // B09 · Esborra una mascota
-  Future<void> esborrarMascota(String uid, String id) {
-    return _mascotes(uid).doc(id).delete();
+  // B09 · Esborra una mascota i tots els seus registres
+  Future<void> esborrarMascota(String uid, String id) async {
+    final mascota = _mascotes(uid).doc(id);
+    final registres = await mascota.collection('registres').get();
+
+    final batch = _db.batch();
+    for (final registre in registres.docs) {
+      batch.delete(registre.reference);
+    }
+    batch.delete(mascota);
+    await batch.commit();
   }
 
   // Llegeix una sola mascota i avisa de cada canvi (per a la fitxa A04)
