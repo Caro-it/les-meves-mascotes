@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../models/mascota.dart';
 import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../styles/app_styles.dart';
-import 'nou_registre_screen.dart';
+import 'historial_screen.dart';
 import 'nova_mascota_screen.dart';
 
 // A04 · Fitxa de la mascota
@@ -147,12 +148,13 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NouRegistreScreen(mascotaId: m.id),
+                      builder: (context) =>
+                          HistorialScreen(mascotaId: m.id, nomMascota: m.nom),
                     ),
                   );
                 },
-                icon: const Icon(Icons.vaccines),
-                label: const Text('Afegir registre'),
+                icon: const Icon(Icons.history),
+                label: const Text('Historial'),
               ),
             ],
           ),
