@@ -32,6 +32,25 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
       : '${d.day.toString().padLeft(2, '0')}/'
             '${d.month.toString().padLeft(2, '0')}/${d.year}';
 
+  // Edat en anys i mesos, p. ex. «2 anys i 3 mesos»
+  String _edat(DateTime naixement) {
+    final avui = DateTime.now();
+    var mesos =
+        (avui.year - naixement.year) * 12 + avui.month - naixement.month;
+    if (avui.day < naixement.day) mesos--; // encara no ha fet el mes
+    final anys = mesos ~/ 12;
+    final resta = mesos % 12;
+
+    if (anys == 0 && resta == 0) return "Menys d'un mes";
+    final textAnys = anys == 0 ? '' : '$anys ${anys == 1 ? 'any' : 'anys'}';
+    final textMesos = resta == 0
+        ? ''
+        : '$resta ${resta == 1 ? 'mes' : 'mesos'}';
+    if (textAnys.isEmpty) return textMesos;
+    if (textMesos.isEmpty) return textAnys;
+    return '$textAnys i $textMesos';
+  }
+
   Future<void> _esborrar(Mascota m) async {
     final confirmat = await showDialog<bool>(
       context: context,
@@ -122,7 +141,11 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
               ),
               ListTile(
                 title: const Text('Data de naixement'),
-                subtitle: Text(_data(m.dataNaixement)),
+                subtitle: Text(
+                  m.dataNaixement == null
+                      ? '—'
+                      : '${_data(m.dataNaixement)} · ${_edat(m.dataNaixement!)}',
+                ),
               ),
               ListTile(
                 title: const Text('Pes'),
