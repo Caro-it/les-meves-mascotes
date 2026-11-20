@@ -1,10 +1,16 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/mascota.dart';
 import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../styles/app_styles.dart';
+import '../widgets/foto_mascota.dart';
 
 // A03 · Nova mascota
 class NovaMascotaScreen extends StatefulWidget {
@@ -27,6 +33,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
   DateTime? _dataNaixement;
   bool _esterilitzat = false;
   DateTime? _dataEsterilitzacio;
+  String? _rutaFoto;
   bool _desant = false;
 
   @override
@@ -43,6 +50,7 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       _dataNaixement = m.dataNaixement;
       _esterilitzat = m.esterilitzat;
       _dataEsterilitzacio = m.dataEsterilitzacio;
+      _rutaFoto = m.rutaFoto;
     }
   }
 
@@ -84,6 +92,26 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
       : '${d.day.toString().padLeft(2, '0')}/'
             '${d.month.toString().padLeft(2, '0')}/${d.year}';
 
+  // Tria una foto de la galeria i, al mòbil, la copia a la carpeta de l'app
+  Future<void> _triarFoto() async {
+    final imatge = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024, // més petita: ocupa menys al mòbil
+      imageQuality: 85,
+    );
+    if (imatge == null) return; // ha cancel·lat
+
+    var ruta = imatge.path; // a Chrome és una adreça temporal (blob:)
+    if (!kIsWeb) {
+      final carpeta = await getApplicationDocumentsDirectory();
+      final nom = 'mascota_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final copia = await File(imatge.path).copy('${carpeta.path}/$nom');
+      ruta = copia.path;
+    }
+    if (!mounted) return;
+    setState(() => _rutaFoto = ruta);
+  }
+
   Future<void> _desar() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _desant = true);
@@ -99,14 +127,13 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
           : _racaController.text.trim(),
       sexe: _sexe,
       dataNaixement: _dataNaixement,
-      // camps que encara no són al formulari: es conserven els de l'original
       pes: double.tryParse(_pesController.text.trim().replaceAll(',', '.')),
       numXip: _xipController.text.trim().isEmpty
           ? null
           : _xipController.text.trim(),
       esterilitzat: _esterilitzat,
       dataEsterilitzacio: _esterilitzat ? _dataEsterilitzacio : null,
-      rutaFoto: original?.rutaFoto,
+      rutaFoto: _rutaFoto,
       color: original?.color ?? AppStyles.petColors.first.toARGB32(),
     );
 
@@ -139,6 +166,34 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
           child: ListView(
             padding: const EdgeInsets.all(AppStyles.spaceM),
             children: [
+              // Foto: tocar-la per triar-ne una de la galeria
+              Center(
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _triarFoto,
+                      child: FotoMascota(
+                        rutaFoto: _rutaFoto,
+                        color: Color(
+                          widget.mascota?.color ??
+                              AppStyles.petColors.first.toARGB32(),
+                        ),
+                        amplada: 120,
+                        alcada: 120,
+                        midaIcona: 48,
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: _triarFoto,
+                      icon: const Icon(Icons.photo_library_outlined),
+                      label: Text(
+                        _rutaFoto == null ? 'Afegir foto' : 'Canviar foto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppStyles.spaceM),
               TextFormField(
                 controller: _nomController,
                 textCapitalization: TextCapitalization.words,

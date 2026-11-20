@@ -4,6 +4,7 @@ import '../models/mascota.dart';
 import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../styles/app_styles.dart';
+import '../widgets/foto_mascota.dart';
 import 'historial_screen.dart';
 import 'nou_registre_screen.dart';
 import 'nova_mascota_screen.dart';
@@ -115,14 +116,13 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
           body: ListView(
             padding: const EdgeInsets.all(AppStyles.spaceM),
             children: [
-              // Capçalera (més endavant hi anirà la foto)
-              Container(
-                height: 180,
-                decoration: BoxDecoration(
-                  color: Color(m.color).withValues(alpha: 0.35),
-                  borderRadius: BorderRadius.circular(AppStyles.radius),
-                ),
-                child: Icon(Icons.pets, size: 72, color: Color(m.color)),
+              // Capçalera amb la foto (o la petjada si no en té)
+              FotoMascota(
+                rutaFoto: m.rutaFoto,
+                color: Color(m.color),
+                amplada: double.infinity,
+                alcada: 180,
+                midaIcona: 72,
               ),
               // Targeta principal, muntada sobre la capçalera
               Transform.translate(

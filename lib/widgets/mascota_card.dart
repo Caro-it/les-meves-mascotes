@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/mascota.dart';
 import '../styles/app_styles.dart';
+import 'foto_mascota.dart';
 
 // Targeta d'una mascota per a la llista de la A02 (disseny de Stitch)
 class MascotaCard extends StatelessWidget {
@@ -41,16 +42,8 @@ class MascotaCard extends StatelessWidget {
               padding: const EdgeInsets.all(AppStyles.spaceM),
               child: Row(
                 children: [
-                  // Avatar (més endavant hi anirà la foto)
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(AppStyles.radius),
-                    ),
-                    child: Icon(Icons.pets, color: color, size: 32),
-                  ),
+                  // Foto de la mascota (o la petjada si no en té)
+                  FotoMascota(rutaFoto: mascota.rutaFoto, color: color),
                   const SizedBox(width: AppStyles.spaceM),
                   Expanded(
                     child: Column(
