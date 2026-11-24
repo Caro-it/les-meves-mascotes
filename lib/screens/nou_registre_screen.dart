@@ -115,6 +115,43 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
     }
   }
 
+  Future<void> _esborrar() async {
+    final confirmat = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Esborrar registre?'),
+        content: Text(
+          'Segur que vols esborrar «${widget.registre!.nom}»? '
+          'No es pot desfer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel·lar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: AppStyles.error),
+            child: const Text('Esborrar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmat != true) return;
+
+    final uid = AuthService().usuariActual!.uid;
+    try {
+      await RegistreService().esborrarRegistre(uid, widget.registre!);
+      if (!mounted) return;
+      Navigator.pop(context); // torna a l'historial
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No s'ha pogut esborrar el registre")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +159,14 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
         title: Text(
           widget.registre == null ? 'Nou registre' : 'Editar registre',
         ),
+        actions: [
+          if (widget.registre != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Esborrar registre',
+              onPressed: _esborrar,
+            ),
+        ],
       ),
       body: SafeArea(
         child: Form(

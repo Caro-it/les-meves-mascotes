@@ -46,4 +46,10 @@ class RegistreService {
       registre.mascotaId,
     ).doc(registre.id).update(registre.toFirestore());
   }
+
+  
+  // Esborra un registre
+  Future<void> esborrarRegistre(String uid, Registre registre) {
+    return _registres(uid, registre.mascotaId).doc(registre.id).delete();
+  }
 }
