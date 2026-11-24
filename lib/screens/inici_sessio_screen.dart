@@ -5,6 +5,7 @@ import '../models/usuari.dart';
 import '../services/auth_service.dart';
 import '../services/usuari_service.dart';
 import '../styles/app_styles.dart';
+import '../widgets/selector_mode.dart';
 
 // A01 · Inici de sessió / Crear compte
 class IniciSessioScreen extends StatefulWidget {
@@ -150,31 +151,9 @@ class _IniciSessioScreenState extends State<IniciSessioScreen> {
                     style: TextStyle(color: AppStyles.ink),
                   ),
                   const SizedBox(height: AppStyles.spaceXL),
-                  SegmentedButton<bool>(
-                    showSelectedIcon: false,
-                    style: SegmentedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEAE5E2),
-                      foregroundColor: AppStyles.ink,
-                      selectedBackgroundColor: AppStyles.primary,
-                      selectedForegroundColor: Colors.white,
-                      side: BorderSide.none,
-                    ),
-                    segments: const [
-                      ButtonSegment(
-                        value: false,
-                        label: Text('Iniciar sessió'),
-                        icon: Icon(Icons.lock_outline),
-                      ),
-                      ButtonSegment(
-                        value: true,
-                        label: Text('Crear compte'),
-                        icon: Icon(Icons.person_add_alt),
-                      ),
-                    ],
-                    selected: {_modeCrear},
-                    onSelectionChanged: (seleccio) {
-                      setState(() => _modeCrear = seleccio.first);
-                    },
+                  SelectorMode(
+                    modeCrear: _modeCrear,
+                    onChanged: (valor) => setState(() => _modeCrear = valor),
                   ),
                   const SizedBox(height: AppStyles.spaceL),
                   if (_modeCrear) ...[
