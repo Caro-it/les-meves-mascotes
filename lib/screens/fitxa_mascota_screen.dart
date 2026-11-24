@@ -276,7 +276,8 @@ class _FitxaMascotaScreenState extends State<FitxaMascotaScreen> {
                         title: const Text('Xip'),
                         subtitle: Text(m.numXip ?? '—'),
                       ),
-                      if (m.esterilitzat)
+                      // Només si hi ha data (si no, sortia «—»)
+                      if (m.esterilitzat && m.dataEsterilitzacio != null)
                         ListTile(
                           leading: const Icon(Icons.event_available),
                           title: const Text("Data d'esterilització"),

@@ -52,11 +52,15 @@ class _IniciScreenState extends State<IniciScreen> {
               future: _perfil,
               builder: (context, snapshot) {
                 final nom = snapshot.data?.nom;
+                // Compte creat fa menys de 10 minuts → primera vegada
+                final dataAlta = snapshot.data?.dataAlta;
+                final esNou = dataAlta != null &&
+                    DateTime.now().difference(dataAlta).inMinutes < 10;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'BENVINGUT/DA DE NOU',
+                      esNou ? 'BENVINGUT/DA' : 'BENVINGUT/DA DE NOU',
                       style: Theme.of(context).textTheme.labelMedium
                           ?.copyWith(letterSpacing: 1.2),
                     ),

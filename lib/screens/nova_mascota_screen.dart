@@ -44,7 +44,8 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
     if (m != null) {
       _nomController.text = m.nom;
       _racaController.text = m.raca ?? '';
-      _pesController.text = m.pes?.toString() ?? '';
+      // Mostrem el pes amb coma, igual que l'escriu l'usuari
+      _pesController.text = m.pes?.toString().replaceAll('.', ',') ?? '';
       _xipController.text = m.numXip ?? '';
       _especie = m.especie;
       _sexe = m.sexe;

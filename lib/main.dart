@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'firebase_options.dart';
 import 'screens/inici_screen.dart';
@@ -22,6 +23,14 @@ class LesMevesMascotesApp extends StatelessWidget {
     return MaterialApp(
       title: 'Les meves mascotes',
       debugShowCheckedModeBanner: false,
+      // Català: calendari (showDatePicker) amb dies, mesos i format dd/mm/aaaa
+      locale: const Locale('ca'),
+      supportedLocales: const [Locale('ca')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppStyles.primary,
