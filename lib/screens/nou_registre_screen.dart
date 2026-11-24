@@ -4,6 +4,7 @@ import '../models/registre.dart';
 import '../services/auth_service.dart';
 import '../services/registre_service.dart';
 import '../styles/app_styles.dart';
+import '../widgets/camp_targeta.dart';
 
 // A06 · Nou registre
 class NouRegistreScreen extends StatefulWidget {
@@ -104,75 +105,101 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
           child: ListView(
             padding: const EdgeInsets.all(AppStyles.spaceM),
             children: [
-              Text('Tipus *', style: Theme.of(context).textTheme.titleSmall),
+              CampTargeta(
+                icona: Icons.category_outlined,
+                titol: 'Tipus',
+                nota: 'Obligatori',
+                child: SegmentedButton<TipusRegistre>(
+                  segments: const [
+                    ButtonSegment(
+                      value: TipusRegistre.vacuna,
+                      label: Text('Vacuna'),
+                    ),
+                    ButtonSegment(
+                      value: TipusRegistre.desparasitacioInterna,
+                      label: Text('Desp. interna'),
+                    ),
+                    ButtonSegment(
+                      value: TipusRegistre.desparasitacioExterna,
+                      label: Text('Desp. externa'),
+                    ),
+                  ],
+                  selected: {_tipus},
+                  onSelectionChanged: (seleccio) =>
+                      setState(() => _tipus = seleccio.first),
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.vaccines_outlined,
+                titol: 'Nom del producte o tractament',
+                nota: 'Obligatori',
+                child: TextFormField(
+                  controller: _nomController,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    hintText: 'ex: Polivalent, NexGard, Milbemax…',
+                  ),
+                  validator: (valor) => (valor == null || valor.trim().isEmpty)
+                      ? 'Escriu el nom de la vacuna o el producte'
+                      : null,
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.calendar_today_outlined,
+                titol: "Data d'aplicació",
+                nota: 'Obligatori',
+                child: InkWell(
+                  onTap: _triarDataAplicada,
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    child: Text(_data(_dataAplicada)),
+                  ),
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.event_repeat,
+                titol: 'Propera dosi prevista',
+                nota: 'Recomanat',
+                child: InkWell(
+                  onTap: _triarProperaDosi,
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(Icons.event),
+                    ),
+                    child: Text(
+                      _properaDosi == null ? 'DD/MM/AAAA' : _data(_properaDosi),
+                    ),
+                  ),
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.local_hospital_outlined,
+                titol: 'Veterinari o centre',
+                nota: 'Opcional',
+                child: TextFormField(
+                  controller: _clinicaController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    hintText: 'ex: Clínica veterinària de Flix',
+                  ),
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.notes,
+                titol: 'Notes i observacions',
+                nota: 'Opcional',
+                child: TextFormField(
+                  controller: _notesController,
+                  textCapitalization: TextCapitalization.sentences,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    hintText: 'ex: Reaccions lleus, lot de la vacuna…',
+                  ),
+                ),
+              ),
               const SizedBox(height: AppStyles.spaceS),
-              SegmentedButton<TipusRegistre>(
-                segments: const [
-                  ButtonSegment(
-                    value: TipusRegistre.vacuna,
-                    label: Text('Vacuna'),
-                  ),
-                  ButtonSegment(
-                    value: TipusRegistre.desparasitacioInterna,
-                    label: Text('Desp. interna'),
-                  ),
-                  ButtonSegment(
-                    value: TipusRegistre.desparasitacioExterna,
-                    label: Text('Desp. externa'),
-                  ),
-                ],
-                selected: {_tipus},
-                onSelectionChanged: (seleccio) =>
-                    setState(() => _tipus = seleccio.first),
-              ),
-              const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _nomController,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Nom *',
-                  hintText: 'ex: Ràbia, Polivalent, Pipeta…',
-                ),
-                validator: (valor) => (valor == null || valor.trim().isEmpty)
-                    ? 'Escriu el nom de la vacuna o el producte'
-                    : null,
-              ),
-              const SizedBox(height: AppStyles.spaceM),
-              InkWell(
-                onTap: _triarDataAplicada,
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: "Data d'aplicació *",
-                    suffixIcon: Icon(Icons.calendar_today),
-                  ),
-                  child: Text(_data(_dataAplicada)),
-                ),
-              ),
-              const SizedBox(height: AppStyles.spaceM),
-              InkWell(
-                onTap: _triarProperaDosi,
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Propera dosi',
-                    suffixIcon: Icon(Icons.event),
-                  ),
-                  child: Text(_data(_properaDosi)),
-                ),
-              ),
-              const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _clinicaController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Clínica'),
-              ),
-              const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _notesController,
-                textCapitalization: TextCapitalization.sentences,
-                maxLines: 3,
-                decoration: const InputDecoration(labelText: 'Notes'),
-              ),
-              const SizedBox(height: AppStyles.spaceXL),
               FilledButton.icon(
                 onPressed: _desant ? null : _desar,
                 icon: const Icon(Icons.check),

@@ -10,6 +10,7 @@ import '../models/mascota.dart';
 import '../services/auth_service.dart';
 import '../services/mascota_service.dart';
 import '../styles/app_styles.dart';
+import '../widgets/camp_targeta.dart';
 import '../widgets/foto_mascota.dart';
 
 // A03 · Nova mascota
@@ -194,130 +195,153 @@ class _NovaMascotaScreenState extends State<NovaMascotaScreen> {
                 ),
               ),
               const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _nomController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Nom *',
-                  hintText: 'ex: Lluna, Thor, Boira…',
-                ),
-                validator: (valor) => (valor == null || valor.trim().isEmpty)
-                    ? 'Escriu el nom de la mascota'
-                    : null,
-              ),
-              const SizedBox(height: AppStyles.spaceL),
-              Text('Espècie *', style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: AppStyles.spaceS),
-
-              SegmentedButton<Especie>(
-                segments: const [
-                  ButtonSegment(value: Especie.gos, label: Text('Gos')),
-                  ButtonSegment(value: Especie.gat, label: Text('Gat')),
-                  ButtonSegment(value: Especie.altres, label: Text('Altres')),
-                ],
-                selected: {_especie},
-                onSelectionChanged: (seleccio) =>
-                    setState(() => _especie = seleccio.first),
-              ),
-              const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _racaController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Raça',
-                  hintText: 'ex: Golden Retriever, Comú europeu…',
-                ),
-              ),
-              const SizedBox(height: AppStyles.spaceL),
-              Text('Sexe', style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: AppStyles.spaceS),
-              SegmentedButton<Sexe>(
-                segments: const [
-                  ButtonSegment(value: Sexe.mascle, label: Text('Mascle')),
-                  ButtonSegment(value: Sexe.femella, label: Text('Femella')),
-                ],
-                selected: _sexe == null ? <Sexe>{} : {_sexe!},
-                emptySelectionAllowed: true,
-                onSelectionChanged: (seleccio) => setState(
-                  () => _sexe = seleccio.isEmpty ? null : seleccio.first,
-                ),
-              ),
-              const SizedBox(height: AppStyles.spaceL),
-              InkWell(
-                onTap: _triarDataNaixement,
-                child: InputDecorator(
+              CampTargeta(
+                icona: Icons.badge_outlined,
+                titol: 'Nom',
+                nota: 'Obligatori',
+                child: TextFormField(
+                  controller: _nomController,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
-                    labelText: 'Data de naixement',
-                    suffixIcon: Icon(Icons.calendar_today),
+                    hintText: 'ex: Lluna, Thor, Boira…',
                   ),
-                  child: Text(
-                    _dataNaixement == null
-                        ? 'Toca per triar'
-                        : '${_dataNaixement!.day.toString().padLeft(2, '0')}/'
-                              '${_dataNaixement!.month.toString().padLeft(2, '0')}/'
-                              '${_dataNaixement!.year}',
+                  validator: (valor) => (valor == null || valor.trim().isEmpty)
+                      ? 'Escriu el nom de la mascota'
+                      : null,
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.pets,
+                titol: 'Espècie',
+                nota: 'Obligatori',
+                child: SegmentedButton<Especie>(
+                  segments: const [
+                    ButtonSegment(value: Especie.gos, label: Text('Gos')),
+                    ButtonSegment(value: Especie.gat, label: Text('Gat')),
+                    ButtonSegment(value: Especie.altres, label: Text('Altres')),
+                  ],
+                  selected: {_especie},
+                  onSelectionChanged: (seleccio) =>
+                      setState(() => _especie = seleccio.first),
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.category_outlined,
+                titol: 'Raça',
+                child: TextFormField(
+                  controller: _racaController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    hintText: 'ex: Golden Retriever, Comú europeu…',
                   ),
                 ),
               ),
-              const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _pesController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+              CampTargeta(
+                icona: Icons.wc,
+                titol: 'Sexe',
+                child: SegmentedButton<Sexe>(
+                  segments: const [
+                    ButtonSegment(
+                      value: Sexe.femella,
+                      icon: Icon(Icons.female),
+                      label: Text('Femella'),
+                    ),
+                    ButtonSegment(
+                      value: Sexe.mascle,
+                      icon: Icon(Icons.male),
+                      label: Text('Mascle'),
+                    ),
+                  ],
+                  selected: _sexe == null ? <Sexe>{} : {_sexe!},
+                  emptySelectionAllowed: true,
+                  onSelectionChanged: (seleccio) => setState(
+                    () => _sexe = seleccio.isEmpty ? null : seleccio.first,
+                  ),
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Pes (kg)',
-                  hintText: 'ex: 4,5',
-                ),
-                validator: (valor) {
-                  final text = valor?.trim() ?? '';
-                  if (text.isEmpty) return null; // és opcional
-                  final pes = double.tryParse(text.replaceAll(',', '.'));
-                  if (pes == null || pes <= 0 || pes > 150) {
-                    return 'Escriu un pes vàlid en kg';
-                  }
-                  return null;
-                },
               ),
-              const SizedBox(height: AppStyles.spaceM),
-              TextFormField(
-                controller: _xipController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                maxLength: 15,
-                decoration: const InputDecoration(
-                  labelText: 'Número de xip',
-                  hintText: '15 xifres',
-                ),
-                validator: (valor) {
-                  final text = valor?.trim() ?? '';
-                  if (text.isEmpty) return null; // és opcional
-                  if (text.length != 15) return 'El xip ha de tenir 15 xifres';
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppStyles.spaceS),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(textEsterilitzat(_sexe)),
-                value: _esterilitzat,
-                onChanged: (valor) => setState(() {
-                  _esterilitzat = valor;
-                  if (!valor) _dataEsterilitzacio = null;
-                }),
-              ),
-              if (_esterilitzat)
-                InkWell(
-                  onTap: _triarDataEsterilitzacio,
+              CampTargeta(
+                icona: Icons.cake_outlined,
+                titol: 'Data de naixement',
+                child: InkWell(
+                  onTap: _triarDataNaixement,
                   child: InputDecorator(
                     decoration: const InputDecoration(
-                      labelText: "Data d'esterilització",
                       suffixIcon: Icon(Icons.calendar_today),
                     ),
-                    child: Text(_data(_dataEsterilitzacio)),
+                    child: Text(
+                      _dataNaixement == null
+                          ? 'DD/MM/AAAA'
+                          : _data(_dataNaixement),
+                    ),
                   ),
                 ),
-              const SizedBox(height: AppStyles.spaceXL),
+              ),
+              CampTargeta(
+                icona: Icons.monitor_weight_outlined,
+                titol: 'Pes (kg)',
+                child: TextFormField(
+                  controller: _pesController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(hintText: 'ex: 4,5'),
+                  validator: (valor) {
+                    final text = valor?.trim() ?? '';
+                    if (text.isEmpty) return null; // és opcional
+                    final pes = double.tryParse(text.replaceAll(',', '.'));
+                    if (pes == null || pes <= 0 || pes > 150) {
+                      return 'Escriu un pes vàlid en kg';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.memory,
+                titol: 'Número de xip',
+                child: TextFormField(
+                  controller: _xipController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  maxLength: 15,
+                  decoration: const InputDecoration(hintText: '15 xifres'),
+                  validator: (valor) {
+                    final text = valor?.trim() ?? '';
+                    if (text.isEmpty) return null; // és opcional
+                    if (text.length != 15) {
+                      return 'El xip ha de tenir 15 xifres';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              CampTargeta(
+                icona: Icons.health_and_safety_outlined,
+                titol: textEsterilitzat(_sexe),
+                trailing: Switch(
+                  value: _esterilitzat,
+                  onChanged: (valor) => setState(() {
+                    _esterilitzat = valor;
+                    if (!valor) _dataEsterilitzacio = null;
+                  }),
+                ),
+                child: _esterilitzat
+                    ? InkWell(
+                        onTap: _triarDataEsterilitzacio,
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: "Data d'esterilització",
+                            suffixIcon: Icon(Icons.calendar_today),
+                          ),
+                          child: Text(_data(_dataEsterilitzacio)),
+                        ),
+                      )
+                    : const Text(
+                        'Ha estat intervingut/da quirúrgicament?',
+                        style: TextStyle(fontSize: 13),
+                      ),
+              ),
+              const SizedBox(height: AppStyles.spaceS),
               FilledButton.icon(
                 onPressed: _desant ? null : _desar,
                 icon: const Icon(Icons.check),
