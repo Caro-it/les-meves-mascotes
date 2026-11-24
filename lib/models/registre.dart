@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 enum TipusRegistre { vacuna, desparasitacioInterna, desparasitacioExterna }
 
@@ -53,4 +54,22 @@ class Registre {
       'avisar': avisar,
     };
   }
+}
+
+// Estat d'un registre segons la propera dosi
+enum EstatRegistre { alDia, tocaAviat, vencut }
+
+// Dies d'antelació per avisar que "toca aviat"
+const int diesAvis = 30;
+
+EstatRegistre? estatRegistre(Registre registre) {
+  final propera = registre.properaDosi;
+  if (propera == null) return null; // sense propera dosi: no hi ha estat
+
+  final avui = DateUtils.dateOnly(DateTime.now());
+  final dies = DateUtils.dateOnly(propera).difference(avui).inDays;
+
+  if (dies < 0) return EstatRegistre.vencut;
+  if (dies <= diesAvis) return EstatRegistre.tocaAviat;
+  return EstatRegistre.alDia;
 }
