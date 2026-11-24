@@ -73,3 +73,12 @@ EstatRegistre? estatRegistre(Registre registre) {
   if (dies <= diesAvis) return EstatRegistre.tocaAviat;
   return EstatRegistre.alDia;
 }
+
+// Estat global d'una mascota: el pitjor dels seus registres
+EstatRegistre? estatMascota(List<Registre> registres) {
+  final estats = registres.map(estatRegistre).whereType<EstatRegistre>();
+  if (estats.isEmpty) return null; // cap registre amb propera dosi
+  if (estats.contains(EstatRegistre.vencut)) return EstatRegistre.vencut;
+  if (estats.contains(EstatRegistre.tocaAviat)) return EstatRegistre.tocaAviat;
+  return EstatRegistre.alDia;
+}

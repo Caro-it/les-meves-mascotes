@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/mascota.dart';
 import '../styles/app_styles.dart';
+import 'estat_mascota.dart';
 import 'foto_mascota.dart';
 
 // Targeta d'una mascota per a la llista de la A02 (disseny de Stitch)
@@ -67,6 +68,8 @@ class MascotaCard extends StatelessWidget {
                           _detall,
                           style: const TextStyle(color: AppStyles.ink),
                         ),
+                        const SizedBox(height: AppStyles.spaceS),
+                        EstatMascota(mascotaId: mascota.id),
                       ],
                     ),
                   ),
