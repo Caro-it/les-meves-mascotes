@@ -41,6 +41,26 @@ class _HistorialScreenState extends State<HistorialScreen> {
     TipusRegistre.desparasitacioExterna => 'Desparasitació externa',
   };
 
+  // Etiqueta de color segons l'estat (null si no hi ha propera dosi)
+  Widget? _etiquetaEstat(EstatRegistre? estat) {
+    if (estat == null) return null;
+    final (text, color) = switch (estat) {
+      EstatRegistre.alDia => ('Al dia', AppStyles.ok),
+      EstatRegistre.tocaAviat => ('Toca aviat', AppStyles.avis),
+      EstatRegistre.vencut => ('Vençut', AppStyles.error),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppStyles.radius),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
   Widget _llista(List<Registre> registres, String textBuit) {
     if (registres.isEmpty) {
       return Center(child: Text(textBuit));
@@ -66,6 +86,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
               '${_textTipus(r.tipus)} · ${_data(r.dataAplicada)}$propera',
             ),
             isThreeLine: r.properaDosi != null,
+            trailing: _etiquetaEstat(estatRegistre(r)),
           ),
         );
       },

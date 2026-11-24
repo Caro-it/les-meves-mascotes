@@ -9,7 +9,11 @@ class AppStyles {
   static const Color coral = Color(0xFFF6828C); // accent mascota
   static const Color error = Color(0xFFC62828); // errors i vençuts
   static const Color fons = Color(0xFFFFF8F5); // crema del fons (Stitch)
-  static const Color beige = Color(0xFFF7EDE8); // fons dels camps dins de targetes (Stitch)
+  static const Color ok = Color(0xFF2E7D32); // verd: registre al dia
+  static const Color avis = Color(0xFFE08A00); // taronja: toca aviat
+  static const Color beige = Color(
+    0xFFF7EDE8,
+  ); // fons dels camps dins de targetes (Stitch)
 
   // Colors que es poden assignar a cada mascota
   static const List<Color> petColors = [blue, pink, coral];
