@@ -8,10 +8,10 @@ import '../widgets/camp_targeta.dart';
 
 // A06 · Nou registre
 class NouRegistreScreen extends StatefulWidget {
-  const NouRegistreScreen({super.key, required this.mascotaId});
+  const NouRegistreScreen({super.key, required this.mascotaId, this.registre});
 
   final String mascotaId;
-
+  final Registre? registre; // null = nou
   @override
   State<NouRegistreScreen> createState() => _NouRegistreScreenState();
 }
@@ -25,6 +25,20 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
   DateTime _dataAplicada = DateUtils.dateOnly(DateTime.now());
   DateTime? _properaDosi;
   bool _desant = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final r = widget.registre;
+    if (r != null) {
+      _tipus = r.tipus;
+      _nomController.text = r.nom;
+      _dataAplicada = r.dataAplicada;
+      _properaDosi = r.properaDosi;
+      _clinicaController.text = r.clinica ?? '';
+      _notesController.text = r.notes ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -71,19 +85,25 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
     setState(() => _desant = true);
 
     final uid = AuthService().usuariActual!.uid;
+    final original = widget.registre;
     final registre = Registre(
-      id: '', // l'id el posa Firestore
+      id: original?.id ?? '', // nou: l'id el posa Firestore
       mascotaId: widget.mascotaId,
       tipus: _tipus,
       nom: _nomController.text.trim(),
       dataAplicada: _dataAplicada,
       properaDosi: _properaDosi,
       clinica: _textOpcional(_clinicaController),
+      avisar: original?.avisar ?? false,
       notes: _textOpcional(_notesController),
     );
 
     try {
-      await RegistreService().crearRegistre(uid, registre);
+      if (original == null) {
+        await RegistreService().crearRegistre(uid, registre);
+      } else {
+        await RegistreService().actualitzarRegistre(uid, registre);
+      }
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
@@ -98,7 +118,11 @@ class _NouRegistreScreenState extends State<NouRegistreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nou registre')),
+      appBar: AppBar(
+        title: Text(
+          widget.registre == null ? 'Nou registre' : 'Editar registre',
+        ),
+      ),
       body: SafeArea(
         child: Form(
           key: _formKey,

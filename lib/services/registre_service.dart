@@ -38,4 +38,12 @@ class RegistreService {
     ).add(registre.toFirestore());
     return doc.id;
   }
+
+  // Actualitza un registre existent
+  Future<void> actualitzarRegistre(String uid, Registre registre) {
+    return _registres(
+      uid,
+      registre.mascotaId,
+    ).doc(registre.id).update(registre.toFirestore());
+  }
 }

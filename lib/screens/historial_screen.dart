@@ -61,6 +61,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
       ),
     );
   }
+
   Widget _llista(List<Registre> registres, String textBuit) {
     if (registres.isEmpty) {
       return Center(child: Text(textBuit));
@@ -87,6 +88,17 @@ class _HistorialScreenState extends State<HistorialScreen> {
             ),
             isThreeLine: r.properaDosi != null,
             trailing: _etiquetaEstat(estatRegistre(r)),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NouRegistreScreen(
+                    mascotaId: widget.mascotaId,
+                    registre: r,
+                  ),
+                ),
+              );
+            },
           ),
         );
       },
